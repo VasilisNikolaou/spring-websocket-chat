@@ -24,6 +24,10 @@ public class WebSocketListener {
 	
 	@EventListener
 	private void handleSessionDisconnectEvent(SessionDisconnectEvent event) {
+		SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		
+        String sessionID = headerAccessor.getSessionId();
+		
+		String username = LocalStorage.getInstance().removeActiveUser(sessionID);
 	}
 }
