@@ -20,7 +20,60 @@
 </head>
 
 <body>
+    
+    <!-- FIRST HTML PAGE -->
+    <div class="container-fluid" id="first-page">
+	    <header>
+			<h2 class="text-light rounded p-3 display-4"
+				style="background-color: #000080;">Spring WebSocket Chat</h2>
+		</header>
+		
+		<div class="row mt-5">
+			<div class="col-sm-3 mx-auto mt-5">
+				<form>
+					<div class="form-group">
+						<input type="text" class="form-control" id="username"
+							placeholder="username">
+					</div>
+					<button type="submit" class="btn btn-primary" id="connect">Connect</button>
+				</form>
+			</div>
+		</div>
+	</div>
 
+     <!-- SECOND HTML PAGE -->
+	<div class="container-fluid" id="second-page" hidden>
+		<header>
+			<h2 class="text-light rounded p-3 display-4"
+				style="background-color: #000080;">Spring WebSocket Chat</h2>
+		</header>
+
+		<div class="row" style="color: #000080;">
+			<div class="col-sm-5">
+				<h2 class="ml-3 mt-5">
+					Participants [<span id="participants">0</span>]
+				</h2>
+				<div class="mt-4 ml-3">
+					<ul class="list-group">
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-7">
+				<h2 class="ml-3 mt-5">Messages</h2>
+				<div class="mt-4 ml-3" id="messages">
+				</div>
+			</div>
+		</div>
+		<div class="row" style="color: #000080;">
+			<div class="col-sm-12">
+				<div class="fixed-bottom mb-3 p-3">
+					<label for="user-input">You will send this message to <span
+						class="font-weight-bold" id="destination">everyone</span></label> <input type="text"
+						class="form-control" placeholder="Type anything ..." id="input-msg" onkeyup="sendMessage(event)">
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
