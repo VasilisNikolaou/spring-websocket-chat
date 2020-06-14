@@ -74,6 +74,94 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- Stomp & SockJS -->
+	<script type="text/javascript"
+		src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+	<script type="text/javascript"
+		src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+		
+	<!-- MY CODE GOES HERE -->
+	<script>
+	 const connectButton = document.querySelector('#connect');
+	    
+	   let username;
+	   let stompClient;
+	   let participants = [];
+	   let destination = 'everyone';
+	   
+	   //Event Listeners
+	   connectButton.addEventListener('click', e => {
+		   e.preventDefault();
+		   
+		   username = document.querySelector('#username').value;
+		   
+		   if(username === '') {
+			   alert('Please insert a username');
+			   return;
+		   }
+		   
+		   connect();
+	   });
+	   
+	   function connect() {
+		   const socket = new SockJS('/ws-chat');
+		   stompClient = Stomp.over(socket);
+		   
+		   stompClient.connect({'username': username}, function(frame) {
+			  
+			  setConnected(true);
+			  		 
+			  
+			  //Receive all public messages.
+			  stompClient.subscribe('/topic/public', function(message) {
+				 showMessage(JSON.parse(message.body));
+			  });
+			  
+			  //Recieve all participants.
+			  stompClient.subscribe('/app/participants', function(message) {
+				   const responseArray = JSON.parse(message.body);
+				   participants = participants.concat(responseArray);
+				   
+				   showParticipants();
+	
+			  });
+			  
+			  stompClient.subscribe('/user/queue/private', function(message) {
+				  console.log('Private message: ' + message.body); 
+				  showMessage(JSON.parse(message.body));
+			  });
+			  
+			   //Received registered users.
+			   stompClient.subscribe('/topic/register', function(message) {
+				    const response = JSON.parse(message.body);
+				    
+				    //Don't append the same name.
+				    if(response.sender !== username) {	
+				    	console.log('Sender: ' + response.sender);
+				    	participants.push(response.sender);
+				    	showNewParticipant(response.sender);
+				    } 
+
+			   });
+			   
+			   stompClient.subscribe('/topic/logout', function(message) {   
+				   const index = participants.indexOf(message.body);
+				   
+				   if(index !== -1) {
+					  participants.splice(index, 1);
+					  removeParticipant(index);
+				   }
+				   
+			   });
+			  
+			  //Send new user.
+			  stompClient.send('/app/register', {}, JSON.stringify({'sender':username})); 
+			  
+		   });
+	   }
+	
+	</script>
 
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
