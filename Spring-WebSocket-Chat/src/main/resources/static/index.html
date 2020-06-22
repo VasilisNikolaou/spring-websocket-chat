@@ -20,9 +20,8 @@
 </head>
 
 <body>
-    
-    <!-- FIRST HTML PAGE -->
-    <div class="container-fluid" id="first-page">
+
+	<div class="container-fluid" id="first-page">
 	    <header>
 			<h2 class="text-light rounded p-3 display-4"
 				style="background-color: #000080;">Spring WebSocket Chat</h2>
@@ -41,7 +40,6 @@
 		</div>
 	</div>
 
-     <!-- SECOND HTML PAGE -->
 	<div class="container-fluid" id="second-page" hidden>
 		<header>
 			<h2 class="text-light rounded p-3 display-4"
@@ -74,16 +72,16 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- Stomp & SockJS -->
 	<script type="text/javascript"
 		src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
 	<script type="text/javascript"
 		src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
-		
+
 	<!-- MY CODE GOES HERE -->
 	<script>
-	 const connectButton = document.querySelector('#connect');
+	   const connectButton = document.querySelector('#connect');
 	    
 	   let username;
 	   let stompClient;
@@ -160,6 +158,143 @@
 			  
 		   });
 	   }
+	   
+	   
+	   
+	   function setConnected(isConnected) {
+		   
+		    if(isConnected) {
+		    	document.querySelector('#first-page').hidden = isConnected;
+		    	document.querySelector('#second-page').hidden = '';	
+		    }
+	   }
+	   
+	   
+	   function showParticipants() {
+		   const ul = document.querySelector('ul');
+		   	   
+		   participants.forEach(participant => {
+			   const li = document.createElement('li');
+			   const i = document.createElement('i');
+			   const p = document.createElement('p');
+			   
+			   li.className = 'list-group-item border-0';
+			   i.className = 'fas fa-user';
+			   p.className = 'text-info font-weight-bold';
+			   p.style = 'display: inline; cursor: pointer;';
+			   p.innerHTML = ' ' + participant;
+			   p.addEventListener('click', changeDestination);
+			   
+			   li.appendChild(i);
+			   li.appendChild(p);
+			   
+			   ul.appendChild(li);
+			   
+		   }); 
+		   
+		   document.querySelector('#participants').innerHTML = participants.length;
+
+	   }
+	   
+	   function showNewParticipant(newParticipant) {
+   
+		   const ul = document.querySelector('ul');
+		   
+		   const li = document.createElement('li');
+		   const i = document.createElement('i');
+		   const p = document.createElement('p');
+		   
+		   li.className = 'list-group-item border-0';
+		   i.className = 'fas fa-user';
+		   p.className = 'text-info font-weight-bold';
+		   p.style = 'display: inline; cursor: pointer;';
+		   p.innerHTML = ' ' + newParticipant;
+		   p.addEventListener('click', changeDestination);
+		   
+		   li.appendChild(i);
+		   li.appendChild(p);
+		   
+		   ul.appendChild(li);
+		   
+		   // update number of participants
+		   document.querySelector('#participants').innerHTML = participants.length;
+	   }
+	   
+	   function sendMessage(e) {
+		   if(e.keyCode === 13) {
+			   e.preventDefault();
+			   
+			   const outerMessage =  document.querySelector('#input-msg').value;
+			   
+			   if(outerMessage === '') {
+				   return;
+			   }
+			   
+			   if(destination === 'everyone') {
+				   stompClient.send('/app/chat.message', {}, JSON.stringify({'sender': username, 'content': outerMessage, 
+					   'type': 'PUBLIC'}));
+				   
+				   document.querySelector('#input-msg').value = ''; 
+				   
+			   } else {
+				   stompClient.send('/app/chat.private.' + destination, {}, JSON.stringify({'sender': username, 
+					   'content': outerMessage, 'type': 'PRIVATE'}));
+				   
+				   document.querySelector('#input-msg').value = ''; 
+			   }
+			   
+		   }
+		   
+	   }
+	   
+	   function showMessage(msg) {
+		   
+		   const div = document.querySelector('#messages');
+		   
+		   const p = document.createElement('p');
+		   const span = document.createElement('span');
+		   
+		   span.className = 'font-weight-bold';
+		   
+		   if(msg.type === 'PUBLIC') {
+			   span.innerHTML = msg.sender + ':';
+			   p.appendChild(span);
+			   p.innerHTML += ' ' + msg.content;
+			   
+		   } else {
+			 
+			   span.innerHTML = '[private] ' + msg.sender + ':';
+			   p.appendChild(span);
+			   p.innerHTML += ' ' + msg.content;
+		   }
+		      
+		   div.appendChild(p);
+	   }
+	   
+	   function removeParticipant(index) {
+		    const ul = document.querySelector('ul');
+		    
+		    ul.removeChild(ul.childNodes[index+1]);
+		    
+		    // update number of participants
+		    document.querySelector('#participants').innerHTML = participants.length;
+	   }
+		   
+	   
+	   function changeDestination(event) {
+		   event.preventDefault();
+		   
+		   const sendTo = event.srcElement.textContent.trim();
+		
+		   if(sendTo !== username) {
+			   destination = sendTo;
+		   } else {
+			   destination = 'everyone';
+		   }
+		   
+           document.querySelector('#destination').textContent = destination;
+	   }
+		  
 	
 	</script>
 
