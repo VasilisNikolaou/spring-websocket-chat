@@ -10,4 +10,5 @@ It's a real-time chat web application made with the help of websockets. Users ca
 * SockJS (fallback options)
 * LocalStorage (Singleton class)
 * Bootstrap
+* JavaScript
 
