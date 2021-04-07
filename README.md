@@ -1,12 +1,14 @@
 # Spring-WebSocket-Chat
-
-It's a real-time chat web application made with the help of websockets. Users can send public/private messages to other active participants.
+The WebSocket protocol defines an important new capability for web applications: full duplex, two-way communication between client and server.
+Facebook's chat api uses websocket protocol, so i have been inspired to create something similar.
+This is a real-time chat web application made with the help of Spring-WebSocket module. 
+Users can send public/private messages to other active participants.
 
 
 # What I Used
 
-* WebSockets
-* Stomp over websockets
+* Spring-WebSocket module
+* Stomp over websocket protocol (as sub-protocol)
 * SockJS (fallback options)
 * LocalStorage (Singleton class)
 * Bootstrap
