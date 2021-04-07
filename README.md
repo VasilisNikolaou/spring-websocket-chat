@@ -12,5 +12,5 @@ Users can send public/private messages to other active participants.
 * SockJS (fallback options)
 * LocalStorage (Singleton class)
 * Bootstrap
-* JavaScript
+* JavaScript (Embedded in .html file)
 
